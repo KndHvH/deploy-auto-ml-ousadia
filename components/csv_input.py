@@ -1,17 +1,14 @@
 
 import streamlit as st
 import pandas as pd
-import numpy as np
-import pickle
-import datetime
+from service.model import predict
+from helpers.color_pred import color_pred
 from pycaret.classification import *
 
 def csv_pred(file):
 
     Xtest = pd.read_csv(file)
-    mdl_lightgbm = load_model('./model/pickle_lightgbm_pycaret')
-    ypred = predict_model(mdl_lightgbm, data = Xtest, raw_score = True)
-
+    ypred = predict(Xtest)
 
     with st.expander('Visualizar CSV carregado:', expanded = False):
         c1, _ = st.columns([2,4])
@@ -33,15 +30,11 @@ def csv_pred(file):
 
         c2.metric('Qtd clientes True', value = qtd_true)
         c3.metric('Qtd clientes False', value = len(ypred) - qtd_true)
-        
-        def color_pred(val):
-            color = 'olive' if val > treshold else 'orangered'
-            return f'background-color: {color}'
 
         tipo_view = st.radio('', ('Completo', 'Apenas predições'))
         df_view = pd.DataFrame(ypred.iloc[:,-1].copy())
+        
         if tipo_view == 'Completo': df_view = ypred.copy()
-            
 
         st.dataframe(df_view.style.applymap(color_pred, subset = ['prediction_score_1']))
 

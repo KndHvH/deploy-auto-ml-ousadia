@@ -1,10 +1,12 @@
 
 import streamlit as st
 
-from service.csv_input import csv_pred
-from service.session_state import init_session_state
-from service.single_input import format_form_data, single_consult_form
-from service.streamlit_page import page_cfg,sidebar
+from cache.session_state import init_session_state
+from components.sidebar import sidebar
+from components.csv_input import csv_pred
+from components.single_input import single_consult_form
+from helpers.format_form_data import format_form_data
+from pages.main_page import page_cfg
 
 init_session_state()
 page_cfg()
@@ -12,8 +14,6 @@ page_cfg()
 st.title('Simulador - Conversão de Vendas')
 
 database, file = sidebar()
-
-
 
 if database == 'CSV':
     if file: csv_pred(file)
