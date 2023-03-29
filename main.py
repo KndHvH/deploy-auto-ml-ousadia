@@ -31,10 +31,10 @@ if database == 'CSV':
         Xtest = pd.read_csv(file)
 
         #carregamento / instanciamento do modelo pkl
-        mdl_lgbm = load_model('./pickle_lgbm_pycaret')
+        mdl_lightgbm = load_model('./model/pickle_lightgbm_pycaret')
 
         #predict do modelo
-        ypred = predict_model(mdl_lgbm, data = Xtest, raw_score = True)
+        ypred = predict_model(mdl_lightgbm, data = Xtest, raw_score = True)
 
         with st.expander('Visualizar CSV carregado:', expanded = False):
             c1, _ = st.columns([2,4])
@@ -52,7 +52,7 @@ if database == 'CSV':
                                 max_value = 1.0,
                                 step = .1,
                                 value = .5)
-            qtd_true = ypred.loc[ypred['Score_True'] > treshold].shape[0]
+            qtd_true = ypred.loc[ypred['prediction_score_1'] > treshold].shape[0]
 
             c2.metric('Qtd clientes True', value = qtd_true)
             c3.metric('Qtd clientes False', value = len(ypred) - qtd_true)
@@ -67,7 +67,7 @@ if database == 'CSV':
             else:
                 df_view = pd.DataFrame(ypred.iloc[:,-1].copy())
 
-            st.dataframe(df_view.style.applymap(color_pred, subset = ['Score_True']))
+            st.dataframe(df_view.style.applymap(color_pred, subset = ['prediction_score_1']))
 
             csv = df_view.to_csv(sep = ';', decimal = ',', index = True)
             st.markdown(f'Shape do CSV a ser baixado: {df_view.shape}')
@@ -84,26 +84,36 @@ if database == 'Online':
     with st.form("Single Consult"):
         
         st.header("Consulta Unica")
+
+        col1,col2,col3,col4 =  st.columns(4)
         
-        form_age = st.number_input("Age",step=1)
-        form_n_kids = st.number_input("Number Of Kids",step=1)
-        form_n_teens = st.number_input("Number Of Teens",step=1)
-        form_income = st.number_input("Income",step=0.01)
+        with col1:
+            form_age = st.number_input("Age",step=1)
+        with col2:
+            form_n_kids = st.number_input("Number Of Kids",step=1)
+        with col3:
+            form_n_teens = st.number_input("Number Of Teens",step=1)
+        with col4:
+            form_income = st.number_input("Income",step=0.01)
 
         
+        col5,col6,col7 =  st.columns([1,1,2])
 
-        form_education = st.selectbox(
-            'Education Level',
-            options=['Basic','2n Cycle','Graduation','Master','Doctor']
-        )
-        form_marital = st.selectbox(
-            'Marital Status',
-            options=['Single','Married','Together','Divorced','Alone','Widow','Absurd']
-        )        
-        form_cmps = st.multiselect(
-                    'Accepted Cmps',
-                    ['Cmp1', 'Cmp2', 'Cmp3', 'Cmp4','Cmp5'])
-        
+        with col5:
+            form_education = st.selectbox(
+                'Education Level',
+                options=['Basic','2n Cycle','Graduation','Master','Doctor']
+            )
+        with col6:
+            form_marital = st.selectbox(
+                'Marital Status',
+                options=['Single','Married','Together','Divorced','Widow']
+            )
+        with col7:
+            form_cmps = st.multiselect(
+                        'Accepted Cmps',
+                        ['Cmp1', 'Cmp2', 'Cmp3', 'Cmp4','Cmp5'])
+            
         form_complain = st.checkbox("Complain")
         
 
