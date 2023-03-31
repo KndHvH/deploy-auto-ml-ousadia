@@ -4,7 +4,7 @@ import streamlit as st
 from cache.session_state import init_session_state
 from components.sidebar import sidebar
 from components.csv_input import csv_pred
-from components.single_input import single_consult_form
+from components.single_input import single_consult_form, single_consult_predict
 from helpers.format_form_data import format_form_data
 from pages.main_page import page_cfg
 
@@ -27,7 +27,12 @@ if database == 'Online':
     else:
         if not st.session_state.formated:
             format_form_data()
-            
+
+    
+        single_consult_predict()
+
+
+    
         if st.button('Delete Form'):
             st.session_state.client = None
             st.experimental_rerun()
