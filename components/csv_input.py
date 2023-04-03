@@ -33,6 +33,10 @@ def csv_pred(file):
 
         tipo_view = st.radio('', ('Completo', 'Apenas predições'))
         df_view = pd.DataFrame(ypred.iloc[:,-1].copy())
+
+        def color_pred(val):
+          color = 'olive' if val > treshold else 'orangered'
+          return f'background-color: {color}'
         
         if tipo_view == 'Completo': df_view = ypred.copy()
 
