@@ -67,7 +67,7 @@ def csv_pred(file):
         axs[1].set_ylabel('Salary')
         axs[1].set_title('Salary by Prediction Label')
 
-        plt.style.use("dark_background")
+        plt.style.use("classic")
         fig.subplots_adjust(wspace=0.5, hspace=0.2)
 
         st.pyplot(fig, transparent=True)
