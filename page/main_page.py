@@ -14,5 +14,10 @@ def page_cfg():
                     button.step-up {display: none;}
                     button.step-down {display: none;}
                     div[data-baseweb] {border-radius: 4px;}
+                    .css-1y4p8pa {
+                      width: 100%;
+                      padding: 6rem 1rem 10rem;
+                      max-width: 60rem;
+                    }
                 </style>""",
                 unsafe_allow_html=True)

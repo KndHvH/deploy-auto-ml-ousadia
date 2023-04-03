@@ -1,0 +1,19 @@
+version: "3.4"
+services:
+  deploy-auto-ml-ousadia:
+    tty: true
+    image: "deploy-auto-ml-ousadia"
+    stdin_open: true
+    build:
+      context: .
+      target: "development"
+    volumes:
+      - ".:/app"
+    expose:
+      - 8501
+    networks:
+      - db_nw
+
+networks:
+  db_nw:
+    driver: bridge
