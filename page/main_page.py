@@ -19,5 +19,9 @@ def page_cfg():
                       padding: 6rem 1rem 10rem;
                       max-width: 60rem;
                     }
+                    .css-184tjsw p {
+                      word-break: break-word;
+                      font-size: 18px;
+                    }
                 </style>""",
                 unsafe_allow_html=True)

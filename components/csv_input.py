@@ -36,7 +36,7 @@ def csv_pred(file):
         df_view = pd.DataFrame(ypred.iloc[:,-1].copy())
 
         def color_pred(val):
-          color = 'green' if val > treshold else 'red'
+          color = '#65ab65' if val > treshold else '#fa8373'
           return f'background-color: {color}'
         
         if tipo_view == 'Completo': df_view = ypred.copy()
