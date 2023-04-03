@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import datetime
-from helpers.color_pred import color_pred
 
 from service.model import predict
 

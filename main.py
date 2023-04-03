@@ -6,7 +6,7 @@ from components.sidebar import sidebar
 from components.csv_input import csv_pred
 from components.single_input import single_consult_form, single_consult_predict
 from helpers.format_form_data import format_form_data
-from pages.main_page import page_cfg
+from page.main_page import page_cfg
 
 init_session_state()
 page_cfg()
