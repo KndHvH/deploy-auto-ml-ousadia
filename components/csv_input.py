@@ -1,6 +1,7 @@
 
 import streamlit as st
 import pandas as pd
+import numpy as np
 from pycaret.classification import *
 
 from service.model import predict
@@ -56,18 +57,35 @@ def csv_pred(file):
         fig, axs = plt.subplots(1, 2, figsize=(12, 6))
 
         ypred_dataframe.groupby(['Education', 'prediction_label'])['prediction_label'].count().unstack().plot(kind='bar', ax=axs[0])
-        axs[0].set_xlabel('Education Level')
-        axs[0].set_ylabel('Count')
         axs[0].set_title('Prediction Label by Education Level')
-        axs[0].legend(labelcolor='w')
+        axs[0].set_xlabel('')
 
-
-        ypred_dataframe.boxplot('Income', by='prediction_label', ax=axs[1])
+        ypred_dataframe.boxplot('Recency', by='prediction_label', ax=axs[1])
         axs[1].set_xlabel('Prediction Label')
-        axs[1].set_ylabel('Salary')
-        axs[1].set_title('Salary by Prediction Label')
+        axs[1].set_ylabel('Recency')
+        axs[1].set_title('Recency by Prediction Label')
 
         plt.style.use("classic")
         fig.subplots_adjust(wspace=0.5, hspace=0.2)
-
+        fig.suptitle('')
         st.pyplot(fig, transparent=True)
+
+        cols = ['AcceptedCmp1', 'AcceptedCmp2', 'AcceptedCmp3', 'AcceptedCmp4', 'AcceptedCmp5']
+        df_cols = ypred_dataframe[cols]
+
+        df_grouped = df_cols.groupby(ypred_dataframe['prediction_label']).sum()
+        labels = cols
+        x = np.arange(len(labels))
+        width = 0.35
+
+        fig, ax = plt.subplots(figsize=(15, 6))
+
+        ax.bar(x - width/2, df_grouped.loc[0], width, label='Prediction = 0')
+        ax.bar(x + width/2, df_grouped.loc[1], width, label='Prediction = 1')
+
+        ax.set_title('Accepted Campaigns by Prediction Label')
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels)
+        ax.legend()
+
+        st.pyplot(plt, transparent=True)
