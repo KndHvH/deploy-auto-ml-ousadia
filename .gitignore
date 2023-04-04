@@ -1,4 +1,4 @@
-# Some Bulshit that keep appearing
+# Remove pycaret internal data pipeline
 C:*
 
 # Byte-compiled / optimized / DLL files
