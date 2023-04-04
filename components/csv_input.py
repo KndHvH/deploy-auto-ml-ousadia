@@ -28,6 +28,7 @@ def csv_pred(file):
                             step = .1,
                             value = .5)
         qtd_true = ypred.loc[ypred['prediction_score_1'] > treshold].shape[0]
+        ypred['prediction_label'] = ypred['prediction_score_1'].apply(lambda x: 1 if x > treshold else 0)
 
         c2.metric('Qtd clientes True', value = qtd_true)
         c3.metric('Qtd clientes False', value = len(ypred) - qtd_true)
@@ -49,69 +50,71 @@ def csv_pred(file):
                         data = csv,
                         file_name = 'Predicoes.csv',
                         mime = 'text/csv')
-        
-    with st.expander('Plots', expanded=True):
-        ypred_dataframe = pd.DataFrame(ypred)
-        
-        fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+    if treshold != 0 and treshold != 1:
+        with st.expander('Plots', expanded=True):
+            ypred_dataframe = pd.DataFrame(ypred)
+            
+            fig, axs = plt.subplots(1, 2, figsize=(12, 6))
 
-        ypred_dataframe.groupby(['Education', 'prediction_label'])['prediction_label'].count().unstack().plot(kind='bar', ax=axs[0])
-        axs[0].set_title('Prediction Label by Education Level')
-        axs[0].set_xlabel('')
+            ypred_dataframe.groupby(['Education', 'prediction_label'])['prediction_label'].count().unstack().plot(kind='bar', ax=axs[0])
+            axs[0].set_title('N° of Predictions by Education Level')
+            axs[0].set_xlabel('')
 
-        ypred_dataframe.groupby(['Marital_Status', 'prediction_label'])['prediction_label'].count().unstack().plot(kind='bar', ax=axs[1])
-        axs[1].set_title('Prediction Label by Marital Status')
-        axs[1].set_xlabel('')
+            ypred_dataframe.groupby(['Marital_Status', 'prediction_label'])['prediction_label'].count().unstack().plot(kind='bar', ax=axs[1])
+            axs[1].set_title('N° of Predictions by Marital Status')
+            axs[1].set_xlabel('')
 
-        plt.style.use("classic")
-        fig.subplots_adjust(wspace=0.5, hspace=0.2)
-        fig.suptitle('')
-        axs[0].legend(fontsize=12)
-        axs[1].legend(fontsize=12)
-        st.pyplot(fig, transparent=True)
+            plt.style.use("classic")
+            fig.subplots_adjust(wspace=0.5, hspace=0.2)
+            fig.suptitle('')
+            axs[0].legend(fontsize=12)
+            axs[1].legend(fontsize=12)
+            st.pyplot(fig, transparent=True)
 
-        cols = ['AcceptedCmp1', 'AcceptedCmp2', 'AcceptedCmp3', 'AcceptedCmp4', 'AcceptedCmp5']
-        df_cols = ypred_dataframe[cols]
+            cols = ['AcceptedCmp1', 'AcceptedCmp2', 'AcceptedCmp3', 'AcceptedCmp4', 'AcceptedCmp5']
+            df_cols = ypred_dataframe[cols]
 
-        df_grouped = df_cols.groupby(ypred_dataframe['prediction_label']).sum()
-        labels = cols
-        x = np.arange(len(labels))
-        width = 0.35
+            df_grouped = df_cols.groupby(ypred_dataframe['prediction_label']).sum()
+            labels = cols
+            x = np.arange(len(labels))
+            width = 0.35
 
-        fig, ax = plt.subplots(figsize=(15, 8))
+            fig, ax = plt.subplots(figsize=(15, 8))
 
-        ax.bar(x - width/2, df_grouped.loc[0], width, label='Prediction = 0')
-        ax.bar(x + width/2, df_grouped.loc[1], width, label='Prediction = 1')
+            ax.bar(x - width/2, df_grouped.loc[0], width, label='Prediction = 0')
+            ax.bar(x + width/2, df_grouped.loc[1], width, label='Prediction = 1')
 
-        for i, v in enumerate(df_grouped.shape):
-            ax.bar_label(ax.containers[i], label=str(v))
+            for i, v in enumerate(df_grouped.shape):
+                ax.bar_label(ax.containers[i], label=str(v))
 
-        ax.set_title('Accepted Campaigns by Prediction Label')
-        ax.set_xticks(x)
-        ax.set_xticklabels(labels)
-        ax.legend(fontsize=12)
+            ax.set_title('N° of Accepted Campaigns by Prediction Label',pad=20,fontdict={'fontsize':20})
+            ax.set_xticks(x)
+            ax.set_xticklabels(labels)
+            ax.legend(fontsize=12)
 
-        st.pyplot(plt, transparent=True)
+            st.pyplot(plt, transparent=True)
 
-        purchases_cols = ["NumDealsPurchases", "NumWebPurchases", "NumCatalogPurchases", "NumStorePurchases", "NumWebVisitsMonth"]
-        df_purchases_cols = ypred_dataframe[purchases_cols]
+            purchases_cols = ["NumDealsPurchases", "NumWebPurchases", "NumCatalogPurchases", "NumStorePurchases", "NumWebVisitsMonth"]
+            df_purchases_cols = ypred_dataframe[purchases_cols]
 
-        df_grouped = df_purchases_cols.groupby(ypred_dataframe['prediction_label']).sum()
-        labels = purchases_cols
-        x = np.arange(len(labels))
-        width = 0.35
+            df_grouped = df_purchases_cols.groupby(ypred_dataframe['prediction_label']).sum()
+            labels = purchases_cols
+            x = np.arange(len(labels))
+            width = 0.35
 
-        fig, ax = plt.subplots(figsize=(15, 8))
+            fig, ax = plt.subplots(figsize=(15, 8))
 
-        ax.bar(x - width/2, df_grouped.loc[0], width, label='Prediction = 0')
-        ax.bar(x + width/2, df_grouped.loc[1], width, label='Prediction = 1')
+            ax.bar(x - width/2, df_grouped.loc[0], width, label='Prediction = 0')
+            ax.bar(x + width/2, df_grouped.loc[1], width, label='Prediction = 1')
 
-        for i, v in enumerate(df_grouped.shape):
-            ax.bar_label(ax.containers[i], label=str(v))
+            for i, v in enumerate(df_grouped.shape):
+                ax.bar_label(ax.containers[i], label=str(v))
 
-        ax.set_title('Purchases Datas by Prediction Label')
-        ax.set_xticks(x)
-        ax.set_xticklabels(labels)
-        ax.legend(fontsize=12)
+            ax.set_title('Purchases Datas by Prediction Label',pad=15,fontdict={'fontsize':20})
+            ax.set_xticks(x)
+            ax.set_xticklabels(labels)
+            ax.legend(fontsize=12)
 
-        st.pyplot(plt, transparent=True)
+            st.pyplot(plt, transparent=True)
+
+            fig, ax = plt.subplots(figsize=(15, 8))
