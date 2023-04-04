@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -60,14 +59,15 @@ def csv_pred(file):
         axs[0].set_title('Prediction Label by Education Level')
         axs[0].set_xlabel('')
 
-        ypred_dataframe.boxplot('Recency', by='prediction_label', ax=axs[1])
-        axs[1].set_xlabel('Prediction Label')
-        axs[1].set_ylabel('Recency')
-        axs[1].set_title('Recency by Prediction Label')
+        ypred_dataframe.groupby(['Marital_Status', 'prediction_label'])['prediction_label'].count().unstack().plot(kind='bar', ax=axs[1])
+        axs[1].set_title('Prediction Label by Marital Status')
+        axs[1].set_xlabel('')
 
         plt.style.use("classic")
         fig.subplots_adjust(wspace=0.5, hspace=0.2)
         fig.suptitle('')
+        axs[0].legend(fontsize=12)
+        axs[1].legend(fontsize=12)
         st.pyplot(fig, transparent=True)
 
         cols = ['AcceptedCmp1', 'AcceptedCmp2', 'AcceptedCmp3', 'AcceptedCmp4', 'AcceptedCmp5']
@@ -78,14 +78,40 @@ def csv_pred(file):
         x = np.arange(len(labels))
         width = 0.35
 
-        fig, ax = plt.subplots(figsize=(15, 6))
+        fig, ax = plt.subplots(figsize=(15, 8))
 
         ax.bar(x - width/2, df_grouped.loc[0], width, label='Prediction = 0')
         ax.bar(x + width/2, df_grouped.loc[1], width, label='Prediction = 1')
 
+        for i, v in enumerate(df_grouped.shape):
+            ax.bar_label(ax.containers[i], label=str(v))
+
         ax.set_title('Accepted Campaigns by Prediction Label')
         ax.set_xticks(x)
         ax.set_xticklabels(labels)
-        ax.legend()
+        ax.legend(fontsize=12)
+
+        st.pyplot(plt, transparent=True)
+
+        purchases_cols = ["NumDealsPurchases", "NumWebPurchases", "NumCatalogPurchases", "NumStorePurchases", "NumWebVisitsMonth"]
+        df_purchases_cols = ypred_dataframe[purchases_cols]
+
+        df_grouped = df_purchases_cols.groupby(ypred_dataframe['prediction_label']).sum()
+        labels = purchases_cols
+        x = np.arange(len(labels))
+        width = 0.35
+
+        fig, ax = plt.subplots(figsize=(15, 8))
+
+        ax.bar(x - width/2, df_grouped.loc[0], width, label='Prediction = 0')
+        ax.bar(x + width/2, df_grouped.loc[1], width, label='Prediction = 1')
+
+        for i, v in enumerate(df_grouped.shape):
+            ax.bar_label(ax.containers[i], label=str(v))
+
+        ax.set_title('Purchases Datas by Prediction Label')
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels)
+        ax.legend(fontsize=12)
 
         st.pyplot(plt, transparent=True)
