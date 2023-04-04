@@ -48,6 +48,10 @@ make docker/run
 make docker/build && make docker/run
 ```
 
+### Host To Access Web Application
+
+- https://ousadia-automl.streamlit.app
+
 **Helpful commands**
 
 _Please, check all available commands in the [Makefile](Makefile) for more information_.
