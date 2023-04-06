@@ -12,13 +12,13 @@ def single_consult_form():
         st.subheader("Client Info")
         col1,col2,col3,col4 =  st.columns(4)
         with col1:
-            client['Age'] = st.number_input("Age",step=1)
+            client['Age'] = st.number_input("Age",step=1, min_value=0, max_value=100)
         with col2:
             client['Income'] = st.number_input("Income",step=0.01)
         with col3:
-            client['Kidhome'] = st.number_input("Number Of Kids",step=1)
+            client['Kidhome'] = st.number_input("Number Of Kids",step=1, min_value=0, max_value=15)
         with col4:
-            client['Teenhome'] = st.number_input("Number Of Teens",step=1)
+            client['Teenhome'] = st.number_input("Number Of Teens",step=1, min_value=0, max_value=15)
         
         
         
@@ -95,10 +95,8 @@ def single_consult_predict():
     Xtest = pd.DataFrame(st.session_state.client, index=[0])
     ypred = predict(Xtest)
 
-
     with st.expander('Visualizar Form carregado:', expanded = False):
         st.dataframe(Xtest)
-
 
     with st.expander('Visualizar Predição:', expanded = True):
         c1, _, _, c3 = st.columns([2,.5,.5,1.5])
@@ -108,8 +106,9 @@ def single_consult_predict():
                             step = .1,
                             value = .5)
         result = ypred.loc[ypred['prediction_score_1'] > treshold].shape[0]
+        color = 'green' if result == 1 else 'red'
 
-        c3.markdown(f'# **{result==1}**')
+        c3.markdown(f'# **:{color}[{result==1}]**')
 
         tipo_view = st.radio('', ('Completo', 'Apenas predições'))
         df_view = pd.DataFrame(ypred.iloc[:,-1].copy())
