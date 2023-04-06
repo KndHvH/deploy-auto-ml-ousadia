@@ -33,7 +33,7 @@ if database == 'Online':
 
 
     
-        if st.button('Delete Form'):
+        if st.button('New Submit'):
             st.session_state.client = None
             st.experimental_rerun()
     

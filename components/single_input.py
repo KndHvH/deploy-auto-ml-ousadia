@@ -12,13 +12,13 @@ def single_consult_form():
         st.subheader("Client Info")
         col1,col2,col3,col4 =  st.columns(4)
         with col1:
-            client['Age'] = st.number_input("Age",step=1)
+            client['Age'] = st.number_input("Age",step=1, min_value=0, max_value=100)
         with col2:
             client['Income'] = st.number_input("Income",step=0.01)
         with col3:
-            client['Kidhome'] = st.number_input("Number Of Kids",step=1)
+            client['Kidhome'] = st.number_input("Number Of Kids",step=1, min_value=0, max_value=15)
         with col4:
-            client['Teenhome'] = st.number_input("Number Of Teens",step=1)
+            client['Teenhome'] = st.number_input("Number Of Teens",step=1, min_value=0, max_value=15)
         
         
         
