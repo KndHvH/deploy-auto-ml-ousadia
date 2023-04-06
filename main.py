@@ -18,7 +18,6 @@ database, file = sidebar()
 if database == 'CSV':
     if file: csv_pred(file)
     else: st.warning('Arquivo CSV não foi carregado')
-        
 
 if database == 'Online':
     if st.session_state.client is None:
@@ -28,10 +27,7 @@ if database == 'Online':
         if not st.session_state.formated:
             format_form_data()
 
-    
         single_consult_predict()
-
-
     
         if st.button('New Submit'):
             st.session_state.client = None

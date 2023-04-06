@@ -95,10 +95,8 @@ def single_consult_predict():
     Xtest = pd.DataFrame(st.session_state.client, index=[0])
     ypred = predict(Xtest)
 
-
     with st.expander('Visualizar Form carregado:', expanded = False):
         st.dataframe(Xtest)
-
 
     with st.expander('Visualizar Predição:', expanded = True):
         c1, _, _, c3 = st.columns([2,.5,.5,1.5])
@@ -108,8 +106,9 @@ def single_consult_predict():
                             step = .1,
                             value = .5)
         result = ypred.loc[ypred['prediction_score_1'] > treshold].shape[0]
+        color = 'green' if result == 1 else 'red'
 
-        c3.markdown(f'# **{result==1}**')
+        c3.markdown(f'# **:{color}[{result==1}]**')
 
         tipo_view = st.radio('', ('Completo', 'Apenas predições'))
         df_view = pd.DataFrame(ypred.iloc[:,-1].copy())
