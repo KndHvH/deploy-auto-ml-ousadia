@@ -25,12 +25,15 @@ def create_scatter_chart(x, y, title="", x_label="", y_label=""):
     return plt
 
 def time_customer_and_recency_plot(dataframe):
+    
+    plt.style.use("seaborn-v0_8-pastel")
+
     fig, axs = plt.subplots(1, 2, figsize=(14, 6))
 
     tick_labels = [0, 0.2, 0.4, 0.6, 0.8, 1]
 
     sns.lineplot(x='prediction_label', y='Time_Customer', data=dataframe, ax=axs[0])
-    axs[0].set_title('Line plot of Time_Customer by Label', pad=15, fontdict={'fontsize':16})
+    axs[0].set_title('Plot of Time Customer by Label', pad=15, fontdict={'fontsize':16})
     axs[0].set_xlabel('Time_Customer')
     axs[0].set_ylabel('Label')
     axs[0].set_yticklabels(tick_labels)
@@ -41,9 +44,8 @@ def time_customer_and_recency_plot(dataframe):
     axs[1].set_xlabel('Label')
     axs[1].set_ylabel('Recency')
 
-    plt.tight_layout()
+    plt.grid(True)
     plt.show()
-
     fig.subplots_adjust(wspace=0.5, hspace=0.2)
 
     st.pyplot(plt, transparent=True)
@@ -51,6 +53,9 @@ def time_customer_and_recency_plot(dataframe):
     
 
 def education_marital_plots(plot_type, dataframe):
+    
+    plt.style.use("bmh")
+
     fig, axs = plt.subplots(1, 2, figsize=(20, 8))
 
     if plot_type == 'Absolute values':
@@ -90,15 +95,18 @@ def education_marital_plots(plot_type, dataframe):
     axs[0].set_xlabel('')
     axs[1].set_xlabel('')
     
-    plt.style.use("classic")
     fig.subplots_adjust(wspace=0.5, hspace=0.2)
     fig.suptitle('')
     axs[0].legend(fontsize=12)
     axs[1].legend(fontsize=12)
+    plt.show()
     st.pyplot(fig, transparent=True)
 
 
 def purchase_campaign_plots(plot_type, ypred_dataframe):
+    
+    plt.style.use("seaborn-v0_8-colorblind")
+
     cols = ['AcceptedCmp1', 'AcceptedCmp2', 'AcceptedCmp3', 'AcceptedCmp4', 'AcceptedCmp5']
     df_cols = ypred_dataframe[cols]
 
@@ -163,7 +171,7 @@ def purchase_campaign_plots(plot_type, ypred_dataframe):
         axs[1].set_ylim([0, 100])
         axs[1].legend(fontsize=12)
     
-    plt.style.use("classic")
     fig.subplots_adjust(wspace=0.5, hspace=0.2)
     fig.suptitle('')
+    plt.show()
     st.pyplot(fig, transparent=True)
