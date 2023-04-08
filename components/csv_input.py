@@ -55,12 +55,13 @@ def csv_pred(file):
 
     if treshold != 0 and treshold != 1:
         with st.expander('Plots', expanded=True):
+
             plot_type = st.radio('',('Absolute values','Relative values'))
             ypred_dataframe = pd.DataFrame(ypred)
+
+            recency_plot(ypred_dataframe)
             
             education_marital_plots(plot_type,ypred_dataframe)
-            
-            # plot 3
 
             purchase_campaign_plots(plot_type,ypred_dataframe)
             

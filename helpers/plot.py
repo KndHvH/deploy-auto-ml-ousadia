@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import streamlit as st
+import seaborn as sns
 import numpy as np
 
 def create_bar_chart(x, y, title="", x_label="", y_label=""):
@@ -23,6 +24,14 @@ def create_scatter_chart(x, y, title="", x_label="", y_label=""):
     plt.ylabel(y_label)
     return plt
 
+def recency_plot(dataframe):
+    plt.figure(figsize=(12, 6))
+    sns.boxplot(x='prediction_label', y='Recency', data=dataframe)
+    plt.title('Boxplot of Recency by Label')
+    plt.xlabel('Label')
+    plt.ylabel('Recency')
+    plt.show()
+    st.pyplot(plt, transparent=True)
 
 def education_marital_plots(plot_type, dataframe):
     fig, axs = plt.subplots(1, 2, figsize=(12, 6))
