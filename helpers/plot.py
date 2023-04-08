@@ -24,6 +24,29 @@ def create_scatter_chart(x, y, title="", x_label="", y_label=""):
     plt.ylabel(y_label)
     return plt
 
+def add_value_labels(ax, spacing=5):
+    for rect in ax.patches:
+        y_value = rect.get_height()
+        x_value = rect.get_x() + rect.get_width() / 2
+
+        space = spacing
+        align = 'bottom'
+
+        if y_value < 0:
+            space *= -1
+            align = 'top'
+
+        label = "{:.0f}".format(y_value)
+
+        ax.annotate(
+            label,                      
+            (x_value, y_value),         
+            xytext=(0, space),          
+            textcoords="offset points", 
+            ha='center',                
+            va=align)                      
+                                        
+
 def time_customer_and_recency_plot(dataframe):
     
     plt.style.use("seaborn-v0_8-pastel")
@@ -64,16 +87,14 @@ def education_marital_plots(plot_type, dataframe):
         axs[0].set_title('N° of Predictions by Education Level',pad=15, fontdict={'fontsize':20})
         axs[0].set_xticklabels(plot_dataframe_0.index, rotation=45)
 
-        for i, v in enumerate(plot_dataframe_0.shape):
-          axs[0].bar_label(axs[0].containers[i], label=str(v))
+        add_value_labels(axs[0])
         
         plot_dataframe_1 = dataframe.groupby(['Marital_Status', 'prediction_label'])['prediction_label'].count().unstack()
         plot_dataframe_1.plot(kind='bar', ax=axs[1])
         axs[1].set_title('N° of Predictions by Marital Status',pad=15, fontdict={'fontsize':20})
         axs[1].set_xticklabels(plot_dataframe_1.index, rotation=45)
 
-        for i, v in enumerate(plot_dataframe_1.shape):
-          axs[1].bar_label(axs[1].containers[i], label=str(v))
+        add_value_labels(axs[1])
 
 
     else:
@@ -81,16 +102,21 @@ def education_marital_plots(plot_type, dataframe):
         prop_ed *= 100
         prop_ed.plot(kind='bar', ax=axs[0])
         axs[0].set_title('Proportion of Predictions by Education Level',pad=15, fontdict={'fontsize':20})
-        
+        axs[0].set_xticklabels(prop_ed.index, rotation=45, fontdict={'fontsize':12})
+
+        add_value_labels(axs[0])
+
         prop_ma = dataframe.groupby(['Marital_Status'])['prediction_label'].value_counts(normalize=True).unstack()
         prop_ma *= 100
         prop_ma.plot(kind='bar', ax=axs[1])
         axs[1].set_title('Proportion of Predictions by Marital Status',pad=15, fontdict={'fontsize':20})
         
+        axs[1].set_xticklabels(prop_ma.index, rotation=45, fontdict={'fontsize':12})
+
+        add_value_labels(axs[1])
+
         axs[0].set_ylabel('Percentage %')
         axs[1].set_ylabel('Percentage %')
-        axs[0].set_ylim([0, 100])
-        axs[1].set_ylim([0, 100])
         
     axs[0].set_xlabel('')
     axs[1].set_xlabel('')
@@ -109,6 +135,9 @@ def purchase_campaign_plots(plot_type, ypred_dataframe):
 
     cols = ['AcceptedCmp1', 'AcceptedCmp2', 'AcceptedCmp3', 'AcceptedCmp4', 'AcceptedCmp5']
     df_cols = ypred_dataframe[cols]
+
+    purchases_cols = ["NumDealsPurchases", "NumWebPurchases", "NumCatalogPurchases", "NumStorePurchases", "NumWebVisitsMonth"]
+    df_purchases_cols = ypred_dataframe[purchases_cols]
 
     df_grouped = df_cols.groupby(ypred_dataframe['prediction_label']).sum()
 
@@ -130,9 +159,6 @@ def purchase_campaign_plots(plot_type, ypred_dataframe):
         axs[0].set_xticklabels(labels, rotation=45)
         axs[0].legend(fontsize=12)
 
-        purchases_cols = ["NumDealsPurchases", "NumWebPurchases", "NumCatalogPurchases", "NumStorePurchases", "NumWebVisitsMonth"]
-        df_purchases_cols = ypred_dataframe[purchases_cols]
-
         df_grouped = df_purchases_cols.groupby(ypred_dataframe['prediction_label']).sum()
         labels = purchases_cols
         x = np.arange(len(labels))
@@ -153,7 +179,7 @@ def purchase_campaign_plots(plot_type, ypred_dataframe):
     else:
         fig, axs = plt.subplots(1, 2, figsize=(15, 8))
 
-        prop_cam = df_cols.groupby(ypred_dataframe['prediction_label'])[cols].apply(lambda x: 100*x/float(x.sum()))
+        prop_cam = df_cols.groupby(ypred_dataframe['prediction_label'])[cols].apply(lambda x: 100*x/x.sum())
         prop_cam.plot(kind='bar', ax=axs[0])
 
         axs[0].set_title('Proportion of Accepted Campaigns by Prediction Label',pad=15,fontdict={'fontsize':20})
@@ -162,7 +188,7 @@ def purchase_campaign_plots(plot_type, ypred_dataframe):
         axs[0].set_ylim([0, 100])
         axs[0].legend(fontsize=12)
 
-        prop_pur = df_purchases_cols.groupby(ypred_dataframe['prediction_label'])[purchases_cols].apply(lambda x: 100*x/float(x.sum()))
+        prop_pur = df_purchases_cols.groupby(ypred_dataframe['prediction_label'])[purchases_cols].apply(lambda x: 100*x/x.sum())
         prop_pur.plot(kind='bar', ax=axs[1])
 
         axs[1].set_title('Proportion of Purchases Data by Prediction Label',pad=15,fontdict={'fontsize':20})
