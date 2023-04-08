@@ -59,7 +59,7 @@ def csv_pred(file):
             plot_type = st.radio('',('Absolute values','Relative values'))
             ypred_dataframe = pd.DataFrame(ypred)
 
-            recency_plot(ypred_dataframe)
+            time_customer_and_recency_plot(ypred_dataframe)
             
             education_marital_plots(plot_type,ypred_dataframe)
 
