@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import streamlit as st
 import seaborn as sns
+import pandas as pd
 import numpy as np
 
 def create_bar_chart(x, y, title="", x_label="", y_label=""):
@@ -45,7 +46,60 @@ def add_value_labels(ax, spacing=5):
             textcoords="offset points", 
             ha='center',                
             va=align)                      
-                                        
+
+def calc_porcentage(df, cols, ref_col):
+    results = {}
+
+    for col in cols:
+        group0 = df[df[ref_col] == 0]
+        group1 = df[df[ref_col] == 1]
+
+        spec00 = group0[group0[col] == 0]
+        spec01 = group0[group0[col] == 1]
+
+        spec10 = group1[group1[col] == 0]
+        spec11 = group1[group1[col] == 1]
+
+        perc00 = spec00.shape[0] / group0.shape[0] * 100
+        perc01 = spec01.shape[0] / group0.shape[0] * 100
+
+        perc10 = spec10.shape[0] / group1.shape[0] * 100
+        perc11 = spec11.shape[0] / group1.shape[0] * 100
+
+        col_perc = pd.Series([perc00, perc01, perc10, perc11], index=[f"{col}_00", f"{col}_01", f"{col}_10", f"{col}_11"])
+        results[col] = col_perc
+    
+    return pd.DataFrame(results)                                       
+
+def plot_porcentage(results):
+    fig, ax = plt.subplots(figsize=(20, 8))
+
+    x = [1, 1.5, 2, 2.5]
+    initial_take_size = 0
+    take_size = 4
+
+    for column in results.columns:
+      y = results[column][initial_take_size:take_size]
+
+      ax.bar(x[0], y[0], label='Value = 0 to Predict = 0' if column == results.columns[0] else '', edgecolor='gray', linewidth=1, color='#EEC584')
+      ax.bar(x[1], y[1], label='Value = 1 to Predict = 0' if column == results.columns[0] else '', edgecolor='gray', linewidth=1, color='#C8AB83')
+      ax.bar(x[2], y[2], label='Value = 0 to Predict = 1' if column == results.columns[0] else '', edgecolor='gray', linewidth=1, color='#CACAAA')
+      ax.bar(x[3], y[3], label='Value = 1 to Predict = 1' if column == results.columns[0] else '', edgecolor='gray', linewidth=1, color='#999973')
+
+      x = [e + 3 for e in x]
+      initial_take_size += 4
+      take_size += 4
+    
+    ax.set_xticks([1.5, 4.5, 7.5, 10.5, 13.5])
+    ax.set_xticklabels(results.columns, fontdict={'fontsize':12})
+    ax.set_ylabel('Percentage')
+    ax.legend(fontsize=12, frameon=True, edgecolor='black')
+    
+
+    add_value_labels(ax)
+
+    plt.show()
+    return fig
 
 def time_customer_and_recency_plot(dataframe):
     
@@ -71,9 +125,7 @@ def time_customer_and_recency_plot(dataframe):
     plt.show()
     fig.subplots_adjust(wspace=0.5, hspace=0.2)
 
-    st.pyplot(plt, transparent=True)
-
-    
+    st.pyplot(plt, transparent=True) 
 
 def education_marital_plots(plot_type, dataframe):
     
@@ -128,7 +180,6 @@ def education_marital_plots(plot_type, dataframe):
     plt.show()
     st.pyplot(fig, transparent=True)
 
-
 def purchase_campaign_plots(plot_type, ypred_dataframe):
     
     plt.style.use("seaborn-v0_8-colorblind")
@@ -178,24 +229,8 @@ def purchase_campaign_plots(plot_type, ypred_dataframe):
         
     else:
         fig, axs = plt.subplots(1, 2, figsize=(15, 8))
-
-        prop_cam = df_cols.groupby(ypred_dataframe['prediction_label'])[cols].apply(lambda x: 100*x/x.sum())
-        prop_cam.plot(kind='bar', ax=axs[0])
-
-        axs[0].set_title('Proportion of Accepted Campaigns by Prediction Label',pad=15,fontdict={'fontsize':20})
-        axs[0].set_ylabel('Percentage %')
-        axs[0].set_xlabel('')
-        axs[0].set_ylim([0, 100])
-        axs[0].legend(fontsize=12)
-
-        prop_pur = df_purchases_cols.groupby(ypred_dataframe['prediction_label'])[purchases_cols].apply(lambda x: 100*x/x.sum())
-        prop_pur.plot(kind='bar', ax=axs[1])
-
-        axs[1].set_title('Proportion of Purchases Data by Prediction Label',pad=15,fontdict={'fontsize':20})
-        axs[1].set_ylabel('Percentage %')
-        axs[1].set_xlabel('')
-        axs[1].set_ylim([0, 100])
-        axs[1].legend(fontsize=12)
+        test = calc_porcentage(ypred_dataframe, cols, 'prediction_label')
+        fig = plot_porcentage(test)
     
     fig.subplots_adjust(wspace=0.5, hspace=0.2)
     fig.suptitle('')
