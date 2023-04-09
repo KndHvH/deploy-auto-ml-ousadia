@@ -202,8 +202,7 @@ def purchase_campaign_plots(plot_type, ypred_dataframe):
         axs[0].bar(x - width/2, df_grouped.loc[0], width, label='Prediction = 0')
         axs[0].bar(x + width/2, df_grouped.loc[1], width, label='Prediction = 1')
 
-        for i, v in enumerate(df_grouped.shape):
-            axs[0].bar_label(axs[0].containers[i], label=str(v))
+        add_value_labels(axs[0])
 
         axs[0].set_title('N° of Accepted Campaigns by Prediction Label',pad=20,fontdict={'fontsize':20})
         axs[0].set_xticks(x)
@@ -218,8 +217,7 @@ def purchase_campaign_plots(plot_type, ypred_dataframe):
         axs[1].bar(x - width/2, df_grouped.loc[0], width, label='Prediction = 0')
         axs[1].bar(x + width/2, df_grouped.loc[1], width, label='Prediction = 1')
 
-        for i, v in enumerate(df_grouped.shape):
-            axs[1].bar_label(axs[1].containers[i], label=str(v))
+        add_value_labels(axs[1])
 
         axs[1].set_title('Purchases Data by Prediction Label',pad=15,fontdict={'fontsize':20})
         axs[1].set_xticks(x)
